@@ -1,0 +1,28 @@
+CREATE OR REPLACE FUNCTION consultar_produto_por_nome (
+    produto_nome VARCHAR(100)
+) RETURNS VOID AS $$
+DECLARE
+    produto_id INT;
+    produto_preco DECIMAL(10, 2);
+    produto_estoque INT;
+BEGIN
+    
+    SELECT id INTO produto_id
+    FROM produtos
+    WHERE nome = produto_nome;
+
+    -- Se encontrou o produto, obtém o preço e estoque
+    IF produto_id IS NOT NULL THEN
+        SELECT preco, estoque INTO produto_preco, produto_estoque
+        FROM produtos
+        WHERE id = produto_id;
+
+        -- Exibe informações do produto
+        RAISE NOTICE 'Nome: %', produto_nome;
+        RAISE NOTICE 'Preço: %', produto_preco;
+        RAISE NOTICE 'Estoque: %', produto_estoque;
+    ELSE
+        RAISE NOTICE 'Produto não encontrado.';
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
